@@ -20,7 +20,7 @@ const userscriptBanner = `// ==UserScript==
 async function build() {
   console.log(`Start Build... ${process.env.NODE_ENV === 'production' ? 'production' : 'development'}\r\n`);
 
-  // 构建网站 - app.js
+  // Build website - app.js
   console.log('Building: dist/app.js');
   await esbuild.build({
     entryPoints: ['src/app.js'],
@@ -32,7 +32,7 @@ async function build() {
     minify: process.env.NODE_ENV === 'production'
   });
 
-  // 构建网站 - i18n.js
+  // Build website - i18n.js
   console.log('Building: dist/i18n.js');
   await esbuild.build({
     entryPoints: ['src/i18n.js'],
@@ -42,7 +42,7 @@ async function build() {
     minify: process.env.NODE_ENV === 'production'
   });
 
-  // 构建油猴脚本
+  // Build userscript
   console.log('Building: dist/userscript/gemini-watermark-remover.user.js');
   await mkdir('dist/userscript', { recursive: true });
   await esbuild.build({
@@ -55,7 +55,7 @@ async function build() {
     minify: false
   });
 
-  // 复制静态文件
+  // Copy static files
   console.log('Copying: src/i18n -> dist/i18n');
   await cp('src/i18n', 'dist/i18n', { recursive: true });
   console.log('Copying: public -> dist');

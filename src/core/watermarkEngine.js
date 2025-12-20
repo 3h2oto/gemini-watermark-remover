@@ -1,6 +1,6 @@
 /**
- * 水印引擎主模块
- * 协调水印检测、alpha map 计算和去除操作
+ * Watermark engine main module
+ * Coordinate watermark detection, alpha map calculation, and removal operations
  */
 
 import { calculateAlphaMap } from './alphaMap.js';
@@ -9,15 +9,15 @@ import BG_48_PATH from '../assets/bg_48.png';
 import BG_96_PATH from '../assets/bg_96.png';
 
 /**
- * 根据图像尺寸检测水印配置
- * @param {number} imageWidth - 图像宽度
- * @param {number} imageHeight - 图像高度
- * @returns {Object} 水印配置 {logoSize, marginRight, marginBottom}
+ * Detect watermark configuration based on image size
+ * @param {number} imageWidth - Image width
+ * @param {number} imageHeight - Image height
+ * @returns {Object} Watermark configuration {logoSize, marginRight, marginBottom}
  */
 export function detectWatermarkConfig(imageWidth, imageHeight) {
-    // Gemini 的水印规则：
-    // 如果图像宽高都大于 1024，使用 96×96 水印
-    // 否则使用 48×48 水印
+    // Gemini's watermark rules:
+    // If both image width and height are greater than 1024, use 96×96 watermark
+    // Otherwise, use 48×48 watermark
     if (imageWidth > 1024 && imageHeight > 1024) {
         return {
             logoSize: 96,
@@ -34,11 +34,11 @@ export function detectWatermarkConfig(imageWidth, imageHeight) {
 }
 
 /**
- * 计算水印在图像中的位置
- * @param {number} imageWidth - 图像宽度
- * @param {number} imageHeight - 图像高度
- * @param {Object} config - 水印配置
- * @returns {Object} 水印位置 {x, y, width, height}
+ * Calculate watermark position in image based on image size and watermark configuration
+ * @param {number} imageWidth - Image width
+ * @param {number} imageHeight - Image height
+ * @param {Object} config - Watermark configuration {logoSize, marginRight, marginBottom}
+ * @returns {Object} Watermark position {x, y, width, height}
  */
 export function calculateWatermarkPosition(imageWidth, imageHeight, config) {
     const { logoSize, marginRight, marginBottom } = config;
@@ -52,7 +52,8 @@ export function calculateWatermarkPosition(imageWidth, imageHeight, config) {
 }
 
 /**
- * 水印引擎类
+ * Watermark engine class
+ * Coordinate watermark detection, alpha map calculation, and removal operations
  */
 export class WatermarkEngine {
     constructor(bgCaptures) {
@@ -81,20 +82,20 @@ export class WatermarkEngine {
     }
 
     /**
-     * 从背景捕获图像获取 alpha map
-     * @param {number} size - 水印尺寸 (48 或 96)
+     * Get alpha map from background captured image based on watermark size
+     * @param {number} size - Watermark size (48 or 96)
      * @returns {Promise<Float32Array>} Alpha map
      */
     async getAlphaMap(size) {
-        // 如果已缓存，直接返回
+        // If cached, return directly
         if (this.alphaMaps[size]) {
             return this.alphaMaps[size];
         }
 
-        // 选择对应尺寸的背景捕获
+        // Select corresponding background capture based on watermark size
         const bgImage = size === 48 ? this.bgCaptures.bg48 : this.bgCaptures.bg96;
 
-        // 创建临时 canvas 来提取 ImageData
+        // Create temporary canvas to extract ImageData
         const canvas = document.createElement('canvas');
         canvas.width = size;
         canvas.height = size;
@@ -103,54 +104,54 @@ export class WatermarkEngine {
 
         const imageData = ctx.getImageData(0, 0, size, size);
 
-        // 计算 alpha map
+        // Calculate alpha map
         const alphaMap = calculateAlphaMap(imageData);
 
-        // 缓存结果
+        // Cache result
         this.alphaMaps[size] = alphaMap;
 
         return alphaMap;
     }
 
     /**
-     * 移除图像上的水印
-     * @param {HTMLImageElement|HTMLCanvasElement} image - 输入图像
-     * @returns {Promise<HTMLCanvasElement>} 处理后的 canvas
+     * Remove watermark from image based on watermark size
+     * @param {HTMLImageElement|HTMLCanvasElement} image - Input image
+     * @returns {Promise<HTMLCanvasElement>} Processed canvas
      */
     async removeWatermarkFromImage(image) {
-        // 创建 canvas
+        // Create canvas to process image
         const canvas = document.createElement('canvas');
         canvas.width = image.width;
         canvas.height = image.height;
         const ctx = canvas.getContext('2d');
 
-        // 绘制原图
+        // Draw original image onto canvas
         ctx.drawImage(image, 0, 0);
 
-        // 获取图像数据
+        // Get image data
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        // 检测水印配置
+        // Detect watermark configuration
         const config = detectWatermarkConfig(canvas.width, canvas.height);
         const position = calculateWatermarkPosition(canvas.width, canvas.height, config);
 
-        // 获取对应尺寸的 alpha map
+        // Get alpha map for watermark size
         const alphaMap = await this.getAlphaMap(config.logoSize);
 
-        // 移除水印
+        // Remove watermark from image data
         removeWatermark(imageData, alphaMap, position);
 
-        // 将处理后的数据写回 canvas
+        // Write processed image data back to canvas
         ctx.putImageData(imageData, 0, 0);
 
         return canvas;
     }
 
     /**
-     * 获取水印信息（用于显示）
-     * @param {number} imageWidth - 图像宽度
-     * @param {number} imageHeight - 图像高度
-     * @returns {Object} 水印信息
+     * Get watermark information (for display)
+     * @param {number} imageWidth - Image width
+     * @param {number} imageHeight - Image height
+     * @returns {Object} Watermark information {size, position, config}
      */
     getWatermarkInfo(imageWidth, imageHeight) {
         const config = detectWatermarkConfig(imageWidth, imageHeight);

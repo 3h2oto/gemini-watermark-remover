@@ -46,10 +46,36 @@ A high-performance, 100% client-side tool for removing Gemini AI watermarks. Bui
 
 ## Usage
 
-1. Open `index.html` in your browser (or visit the hosted link).
+### Online Website
+
+1. Open [banana.ovo.re](https://banana.ovo.re).
 2. Drag and drop or click to select your Gemini-generated image.
 3. The engine will automatically process and remove the watermark.
 4. Download the cleaned image.
+
+### Userscript for Gemini Conversation Pages
+
+1. Install a userscript manager (e.g., Tampermonkey or Greasemonkey).
+2. Open [gemini-watermark-remover.user.js](https://banana.ovo.re/userscript/gemini-watermark-remover.user.js).
+3. The script will install automatically.
+4. Navigate to Gemini conversation pages.
+5. Click "Copy Image" or "Download Image" to remove the watermark.
+
+## Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Development build
+pnpm dev
+
+# Production build
+pnpm build
+
+# Local preview
+pnpm serve
+```
 
 ## How it Works
 
@@ -83,20 +109,25 @@ By capturing the watermark on a known solid background, we reconstruct the exact
 ## Project Structure
 
 ```text
-gemini-watermark-web/
-├── index.html             # Main entry point
-├── css/
-│   └── style.css          # UI Styling
-├── js/
+gemini-watermark-remover/
+├── public/
+│   ├── index.html         # Main page
+│   └── terms.html         # Terms of Service page
+├── src/
 │   ├── core/
 │   │   ├── alphaMap.js    # Alpha map calculation logic
 │   │   ├── blendModes.js  # Implementation of Reverse Alpha Blending
-│   │   └── watermarkEngine.js # Main engine coordinator
+│   │   └── watermarkEngine.js  # Main engine coordinator
 │   ├── assets/
-│   │   ├── bg-capture-48.png  # Pre-captured 48×48 watermark map
-│   │   └── bg-capture-96.png  # Pre-captured 96×96 watermark map
-│   └── app.js             # UI Interaction & Event handling
-└── README.md
+│   │   ├── bg_48.png      # Pre-captured 48×48 watermark map
+│   │   └── bg_96.png      # Pre-captured 96×96 watermark map
+│   ├── i18n/              # Internationalization language files
+│   ├── userscript/        # Userscript for Gemini
+│   ├── app.js             # Website application entry point
+│   └── i18n.js            # Internationalization utilities
+├── dist/                  # Build output directory
+├── build.js               # Build script
+└── package.json
 ```
 
 ## Core Modules

@@ -46,10 +46,35 @@
 
 ## 使用方法
 
-1. 在浏览器中打开 `index.html`
+### 在线使用
+
+1. 浏览器打开 [banana.ovo.re](https://banana.ovo.re)
 2. 拖拽或点击选择带水印的 Gemini 图片
 3. 图片会自动开始处理，移除水印
 4. 下载处理后的图片
+
+### 油猴脚本
+
+1. 安装油猴插件（如 Tampermonkey 或 Greasemonkey）
+2. 打开 [gemini-watermark-remover.user.js](https://banana.ovo.re/userscript/gemini-watermark-remover.user.js)
+3. 脚本会自动安装到浏览器中
+4. Gemini 对话页面点击复制或者下载图片时，会自动移除水印
+
+## 开发
+
+```bash
+# 安装依赖
+pnpm install
+
+# 开发构建
+pnpm dev
+
+# 生产构建
+pnpm build
+
+# 本地预览
+pnpm serve
+```
 
 ## 算法原理
 
@@ -83,20 +108,25 @@ $$original = \frac{watermarked - \alpha \cdot logo}{1 - \alpha}$$
 ## 项目结构
 
 ```
-gemini-watermark-web/
-├── index.html              # 主页面
-├── css/
-│   └── style.css          # 样式文件
-├── js/
+gemini-watermark-remover/
+├── public/
+│   ├── index.html         # 主页面
+│   └── terms.html         # 使用条款页面
+├── src/
 │   ├── core/
 │   │   ├── alphaMap.js    # Alpha map 计算
 │   │   ├── blendModes.js  # 反向 alpha 混合算法
 │   │   └── watermarkEngine.js  # 主引擎
 │   ├── assets/
-│   │   ├── bg-capture-48.png  # 48×48 水印背景
-│   │   └── bg-capture-96.png  # 96×96 水印背景
-│   └── app.js             # UI 交互逻辑
-└── README.md
+│   │   ├── bg_48.png      # 48×48 水印背景
+│   │   └── bg_96.png      # 96×96 水印背景
+│   ├── i18n/              # 国际化语言文件
+│   ├── userscript/        # 用户脚本
+│   ├── app.js             # 网站应用入口
+│   └── i18n.js            # 国际化工具
+├── dist/                  # 构建输出目录
+├── build.js               # 构建脚本
+└── package.json
 ```
 
 ## 核心模块
